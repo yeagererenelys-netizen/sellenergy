@@ -1,79 +1,21 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { 
   Calendar, 
   Clock, 
   ArrowRight, 
-  User,
   Tag
 } from 'lucide-react';
-
-const blogPosts = [
-  {
-    id: 'optimize-amazon-ads',
-    title: 'How to Optimize Amazon Ads for Maximum ROI',
-    excerpt: 'Learn the proven strategies our team uses to manage ₹5+ crore in ad spend with exceptional returns. From keyword research to bid optimization.',
-    category: 'Amazon Marketing',
-    author: 'Kunal Agarwal',
-    date: 'January 10, 2026',
-    readTime: '8 min read',
-    image: 'amazon',
-  },
-  {
-    id: 'social-media-tips-small-business',
-    title: 'Social Media Tips for Small Businesses in 2026',
-    excerpt: 'Discover actionable social media strategies that helped our clients grow from 2,000 to 50,000+ followers organically.',
-    category: 'Social Media',
-    author: 'SellEnergy Team',
-    date: 'January 5, 2026',
-    readTime: '6 min read',
-    image: 'social',
-  },
-  {
-    id: 'ecommerce-trends-india',
-    title: 'E-commerce Trends to Watch in India',
-    excerpt: 'The Indian e-commerce landscape is evolving rapidly. Here are the key trends that will shape online selling in the coming year.',
-    category: 'E-commerce',
-    author: 'Kunal Agarwal',
-    date: 'December 28, 2025',
-    readTime: '10 min read',
-    image: 'ecommerce',
-  },
-  {
-    id: 'google-ads-beginners',
-    title: 'Google Ads for Beginners: A Complete Guide',
-    excerpt: 'New to Google Ads? This comprehensive guide covers everything from campaign setup to optimization and tracking.',
-    category: 'Paid Advertising',
-    author: 'SellEnergy Team',
-    date: 'December 20, 2025',
-    readTime: '12 min read',
-    image: 'google',
-  },
-  {
-    id: 'brand-building-digital-age',
-    title: 'Building a Strong Brand in the Digital Age',
-    excerpt: 'Your brand is more than just a logo. Learn how to create a memorable brand identity that resonates with your target audience.',
-    category: 'Branding',
-    author: 'Kunal Agarwal',
-    date: 'December 15, 2025',
-    readTime: '7 min read',
-    image: 'brand',
-  },
-  {
-    id: 'content-marketing-strategy',
-    title: 'Creating a Content Marketing Strategy That Works',
-    excerpt: 'Content is king, but only when done right. Here\'s how to create a content strategy that attracts and converts your ideal customers.',
-    category: 'Content Marketing',
-    author: 'SellEnergy Team',
-    date: 'December 10, 2025',
-    readTime: '9 min read',
-    image: 'content',
-  },
-];
-
-const categories = ['All', 'Amazon Marketing', 'Social Media', 'E-commerce', 'Paid Advertising', 'Branding', 'Content Marketing'];
+import { blogPosts, categories } from '@/data/blogPosts';
 
 const Blog = () => {
+  const [activeCategory, setActiveCategory] = useState('All');
+
+  const filteredPosts = activeCategory === 'All' 
+    ? blogPosts 
+    : blogPosts.filter(post => post.category === activeCategory);
+
   return (
     <main className="pt-16 md:pt-20">
       {/* Hero Section */}
@@ -95,11 +37,12 @@ const Blog = () => {
       <section className="py-8 bg-card border-b border-border">
         <div className="container-custom">
           <div className="flex flex-wrap gap-3 justify-center">
-            {categories.map((category, index) => (
+            {categories.map((category) => (
               <button
                 key={category}
+                onClick={() => setActiveCategory(category)}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                  index === 0
+                  category === activeCategory
                     ? 'bg-primary text-primary-foreground'
                     : 'bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary'
                 }`}
@@ -115,16 +58,20 @@ const Blog = () => {
       <section className="section-padding bg-background">
         <div className="container-custom">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {blogPosts.map((post, index) => (
+            {filteredPosts.map((post, index) => (
               <article
                 key={post.id}
                 className="card-elevated overflow-hidden card-hover animate-fade-in-up group"
                 style={{ animationDelay: `${index * 100}ms` }}
               >
-                {/* Image Placeholder */}
-                <div className="h-48 bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
-                  <span className="text-4xl opacity-50">📊</span>
-                </div>
+                {/* Image */}
+                <Link to={`/blog/${post.id}`} className="block h-48 overflow-hidden">
+                  <img 
+                    src={post.image} 
+                    alt={post.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                </Link>
                 
                 <div className="p-6">
                   {/* Category */}
@@ -135,7 +82,7 @@ const Blog = () => {
                   
                   {/* Title */}
                   <Link to={`/blog/${post.id}`}>
-                    <h2 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors">
+                    <h2 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors line-clamp-2">
                       {post.title}
                     </h2>
                   </Link>
@@ -162,9 +109,9 @@ const Blog = () => {
                   {/* Read More Link */}
                   <Link 
                     to={`/blog/${post.id}`}
-                    className="inline-flex items-center gap-2 text-primary font-medium text-sm mt-4 hover:gap-3 transition-all"
+                    className="inline-flex items-center gap-2 text-primary font-medium text-sm mt-4 hover:gap-3 transition-all group/link"
                   >
-                    Read More <ArrowRight className="w-4 h-4" />
+                    Read More <ArrowRight className="w-4 h-4 group-hover/link:translate-x-1 transition-transform" />
                   </Link>
                 </div>
               </article>
